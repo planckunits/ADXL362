@@ -143,6 +143,54 @@ void ADXL362::readXYZTData(int16_t &XData, int16_t &YData, int16_t &ZData, int16
 #endif
 }
 
+float ADXL362::readXOrientation()
+{
+
+	float XOrientation = atan2(readXData(), readYData()) / 0.0174533;
+
+#ifdef ADXL362_DEBUG
+	Serial.print("\tXOrientation = ");
+	Serial.println(XOrientation);
+#endif
+	return XOrientation;
+
+}
+
+float ADXL362::readYOrientation()
+{
+
+	float YOrientation = atan(readYData() / sqrt(pow(readXData(),2) + pow(readZData(), 2))) / 0.0174533;
+
+#ifdef ADXL362_DEBUG
+	Serial.print("\tXOrientation = ");
+	Serial.println(YOrientation);
+#endif
+	return YOrientation;
+
+}
+
+float ADXL362::readZOrientation()
+{
+	float ZOrientation = atan(readZData() / sqrt(pow(readXData(),2) + pow(readYData(), 2))) / 0.0174533;
+
+#ifdef ADXL362_DEBUG
+	Serial.print("\tZOrientation = ");
+	Serial.println(ZOrientation);
+#endif
+
+	return ZOrientation;
+
+}
+
+float ADXL362::readXYZOrientation(float &XOrientation, float &YOrientation, float &ZOrientation)
+{
+    digitalWrite(slaveSelectPin, LOW);
+    XOrientation = readXOrientation(); 
+    YOrientation = readYOrientation(); 
+    ZOrientation = readZOrientation(); 
+    digitalWrite(slaveSelectPin, HIGH);
+}
+
 void ADXL362::setupDCActivityInterrupt(int16_t threshold, byte time){
 	//  Setup motion and time thresholds
 	SPIwriteTwoRegisters(0x20, threshold);
